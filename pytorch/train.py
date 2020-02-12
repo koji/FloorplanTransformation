@@ -29,7 +29,7 @@ def main(options):
     dataloader = DataLoader(dataset, batch_size=options.batchSize, shuffle=True, num_workers=16)
 
     model = Model(options)
-    model.cuda()
+    # model.cuda()
     model.train()
 
     if options.restore == 1:

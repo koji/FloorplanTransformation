@@ -139,14 +139,14 @@ def getRoomLabelMap():
     labelMap['bedroom'] = 3
     labelMap['bathroom'] = 4
     labelMap['restroom'] = 4
-    labelMap['washing_room'] = 4    
+    labelMap['washing_room'] = 4
     labelMap['office'] = 3
     labelMap['closet'] = 6
     labelMap['balcony'] = 7
     labelMap['corridor'] = 8
     labelMap['dining_room'] = 9
     labelMap['laundry_room'] = 10
-    labelMap['PS'] = 10    
+    labelMap['PS'] = 10
     return labelMap
 
 def getIconLabelMap():
@@ -168,7 +168,7 @@ def loadLabelMap():
     for icon, label in iconMap.items():
         labelMap[icon] = ('icons', label)
         continue
-    for room, label in roomMap.items():    
+    for room, label in roomMap.items():
         labelMap[room] = ('rooms', label)
         continue
     labelMap['door'] = 8
@@ -184,7 +184,7 @@ def augmentSample(options, image, background_colors=[], split='train'):
     transformation[0][0] = transformation[1][1] = float(max_size) / image_sizes.max()
     transformation[2][2] = 1
     image_sizes = (image_sizes / image_sizes.max() * max_size).astype(np.int32)
-    
+
     if image_sizes[1] == options.width or split != 'train':
         offset_x = 0
     else:
@@ -204,7 +204,7 @@ def augmentSample(options, image, background_colors=[], split='train'):
     else:
         full_image = background_colors[np.random.choice(np.arange(len(background_colors), dtype=np.int32), options.width * options.height)].reshape((options.height, options.width, 3))
         pass
-        
+
     #full_image = np.full((options.height, options.width, 3), fill_value=-1, dtype=np.float32)
     full_image[offset_y:offset_y + image_sizes[0], offset_x:offset_x + image_sizes[1]] = cv2.resize(image, (image_sizes[1], image_sizes[0]))
     image = full_image
@@ -237,15 +237,15 @@ class FloorplanDataset(Dataset):
             for line in f:
                 self.imagePaths.append([value.strip() for value in line.split('\t')])
                 continue
-            
+
         if options.numTrainingImages > 0 and split == 'train':
             self.numImages = options.numTrainingImages
         else:
-            self.numImages = len(self.imagePaths)            
+            self.numImages = len(self.imagePaths)
             pass
-        self.labelMap = loadLabelMap()        
+        self.labelMap = loadLabelMap()
         return
-    
+
     def __len__(self):
         return self.numImages
 
@@ -266,17 +266,19 @@ class FloorplanDataset(Dataset):
             index = debug
             print(index, self.imagePaths[index][1])
             pass
-        
+
         image = cv2.imread(self.dataFolder + self.imagePaths[index][0])
         image_ori = image
+        print(self.dataFolder + self.imagePaths[index][0])
+        print(image)
         image_width, image_height = image.shape[1], image.shape[0]
 
         #def transformPoint(x, y, resize=False):
         #if resize:
         #return (int(round(float(x) * self.options.width / image_width)), int(round(float(y) * self.options.height / image_height)))
         #else:
-        #return (int(round(float(x))), int(round(float(y))))            
-        
+        #return (int(round(float(x))), int(round(float(y))))
+
         walls = []
         wall_types = []
         doors = []
